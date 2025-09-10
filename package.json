@@ -1,0 +1,17 @@
+{
+  "name": "sagetask_playwright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "loginTests": "npx playwright test --grep @Login"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.1",
+    "allure-playwright": "^3.3.3"
+  }
+}
