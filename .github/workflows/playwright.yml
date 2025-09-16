@@ -26,6 +26,7 @@ jobs:
         path: playwright-report/
         retention-days: 30
     - name: Wait for playwright-report and upload if present
+      if: ${{ always() }}
       shell: bash
       run: |
         REPORT_DIR="run-${{ github.run_id }}-${{ github.run_attempt }}"
