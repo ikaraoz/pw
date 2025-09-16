@@ -25,13 +25,26 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-    - name: Upload HTML report to Azure
-      if: ${{ always() }}
+    - name: Wait for playwright-report and upload if present
       shell: bash
       run: |
-        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        azcopy cp --recursive "./playwright-report/*" "https://<STORAGE_ACCOUNT_NAME>.blob.core.windows.net/\$web/$REPORT_DIR"
-        echo "::notice title=HTML report url::https://<STORAGE_ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
+        REPORT_DIR="run-${{ github.run_id }}-${{ github.run_attempt }}"
+        RETRIES=5
+        DELAY=10 # seconds
+
+        for i in $(seq 1 $RETRIES); do
+          if [ "$(ls -A ./playwright-report)" ]; then
+            azcopy cp --recursive "./playwright-report/*" "https://<STORAGE_ACCOUNT_NAME>.blob.core.windows.net/\$web/$REPORT_DIR"
+            echo "::notice title=HTML report url::https://<STORAGE_ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
+            exit 0
+          else
+            echo "No files found in ./playwright-report. Attempt $i/$RETRIES. Waiting $DELAY seconds..."
+            sleep $DELAY
+          fi
+        done
+
+        echo "No files found in ./playwright-report after $RETRIES attempts. Skipping azcopy."
+        exit 1
       env:
         AZCOPY_AUTO_LOGIN_TYPE: SPN
         AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
