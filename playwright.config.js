@@ -31,8 +31,8 @@ export default defineConfig({
     timeout: 5000, //timeout for each expect assertion
   },
   use: {
-    browserName: 'webkit',
-    headless: false,
+    browserName: 'chromium',
+    headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     viewport: { width: 1280, height: 720 },
