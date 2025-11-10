@@ -1,7 +1,7 @@
 
 # Playwright
 node_modules/
-/.github/
+# /.github/
 /test-results/
 /playwright-report/
 /blob-report/
